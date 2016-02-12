@@ -7,7 +7,7 @@
     <groupId>io.beanmapper</groupId>
     <artifactId>beanmapper-petshop</artifactId>
     <version>1.0.0</version>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
     <name>42 BeanMapper petshop</name>
     <description>Application used to show how to use the BeanMapper</description>
     <inceptionYear>2016</inceptionYear>
@@ -40,15 +40,19 @@
     </developers>
 
     <properties>
+        <java.version>1.8</java.version>
         <beanmapper.version>0.2.19</beanmapper.version>
         <beanmapper-spring.version>0.1.2</beanmapper-spring.version>
         <spring.version>4.2.4.RELEASE</spring.version>
         <spring.jpa.version>1.9.2.RELEASE</spring.jpa.version>
         <hibernate.version>5.1.0.Final</hibernate.version>
         <javax.servlet.version>3.1.0</javax.servlet.version>
+        <hsqldb.version>2.3.2</hsqldb.version>
         <junit.version>4.11</junit.version>
         <maven.cobertura.version>2.4</maven.cobertura.version>
         <maven.javadoc.version>2.10.3</maven.javadoc.version>
+        <maven-war-plugin.version>2.4</maven-war-plugin.version>
+        <maven-assembly-plugin.version>2.4</maven-assembly-plugin.version>
     </properties>
 
     <dependencies>
@@ -93,6 +97,11 @@
             <artifactId>hibernate-entitymanager</artifactId>
             <version>${hibernate.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
 
         <!-- Testing -->
         <dependency>
@@ -109,27 +118,117 @@
             <version>${javax.servlet.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Database -->
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${hsqldb.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
-        <defaultGoal>install</defaultGoal>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>${maven-war-plugin.version}</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <archive>
+                        <forced>false</forced>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <Build-Time>${maven.build.timestamp}</Build-Time>
+                        </manifestEntries>
+                    </archive>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!-- Start up a local tomcat -->
+        <profile>
+            <id>tomcat</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <tomcat.port>8080</tomcat.port>
+                <spring.profiles>test</spring.profiles>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.tomcat.maven</groupId>
+                        <artifactId>tomcat7-maven-plugin</artifactId>
+                        <version>2.2</version>
+                        <configuration>
+                            <port>${tomcat.port}</port>
+                            <path>/api</path>
+                            <useTestClasspath>true</useTestClasspath>
+                            <systemProperties>
+                                <spring.profiles.active>${spring.profiles}</spring.profiles.active>
+                            </systemProperties>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Prepare the distribution -->
+        <profile>
+            <id>dist</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <db.build.directory>${project.build.directory}/db</db.build.directory>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- Generates zip file -->
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>${maven-assembly-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>make-distribution</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <appendAssemblyId>false</appendAssemblyId>
+                                    <descriptors>
+                                        <descriptor>src/main/assembly/distribution-zip.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <reporting>
         <plugins>
