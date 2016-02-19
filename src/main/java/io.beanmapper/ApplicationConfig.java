@@ -48,6 +48,7 @@ public class ApplicationConfig {
         return new BeanMapperBuilder()
                 .addPackagePrefix(ApplicationConfig.class)
                 .setBeanUnproxy(new HibernateAwareBeanUnproxy())
+                .addProxySkipClass(Enum.class)
                 .addConverter(new IdToEntityBeanConverter(applicationContext))
                 .build();
     }
@@ -79,6 +80,4 @@ public class ApplicationConfig {
         transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
         return transactionManager;
     }
-
-
 }

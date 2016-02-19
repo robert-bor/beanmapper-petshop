@@ -16,7 +16,15 @@ public class PetService {
         return petRepository.findAll();
     }
 
-    public Pet create(Pet newPet) {
-        return petRepository.save(newPet);
+    public Pet findOne(Long id) {
+        return petRepository.findOne(id);
+    }
+
+    public Pet save(Pet pet) {
+        return petRepository.save(pet);
+    }
+
+    public void delete(Long id) {
+        petRepository.delete(id);
     }
 }

@@ -1,6 +1,5 @@
 package io.beanmapper.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.domain.Persistable;
 
 import javax.persistence.GeneratedValue;
@@ -25,7 +24,6 @@ public abstract class BaseModel implements Persistable<Long> {
     }
 
     @Override
-    @JsonIgnore
     public boolean isNew() {
         return id == null;
     }
