@@ -41,8 +41,8 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <beanmapper.version>0.2.19</beanmapper.version>
-        <beanmapper-spring.version>0.1.2</beanmapper-spring.version>
+        <beanmapper.version>0.3.0-SNAPSHOT</beanmapper.version>
+        <beanmapper-spring.version>0.1.3</beanmapper-spring.version>
         <spring.version>4.2.4.RELEASE</spring.version>
         <spring.jpa.version>1.9.2.RELEASE</spring.jpa.version>
         <hibernate.version>5.1.0.Final</hibernate.version>
@@ -173,7 +173,7 @@
             </activation>
             <properties>
                 <tomcat.port>8080</tomcat.port>
-                <spring.profiles>test</spring.profiles>
+                <spring.profiles>test, data</spring.profiles>
             </properties>
             <build>
                 <plugins>

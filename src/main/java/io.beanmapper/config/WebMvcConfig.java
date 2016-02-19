@@ -2,7 +2,6 @@ package io.beanmapper.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.beanmapper.ApplicationConfig;
 import io.beanmapper.BeanMapper;
 import io.beanmapper.spring.web.MergedFormMethodArgumentResolver;
@@ -36,14 +35,9 @@ import java.util.List;
         excludeFilters = @Filter({ Configuration.class, Service.class, Repository.class }))
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
-    @Autowired
-    private FormattingConversionService mvcConversionService;
-
-    @Autowired
-    private BeanMapper beanMapper;
-
-    @Autowired
-    private ApplicationContext applicationContext;
+    @Autowired private FormattingConversionService mvcConversionService;
+    @Autowired private BeanMapper beanMapper;
+    @Autowired private ApplicationContext applicationContext;
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
@@ -69,10 +63,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.findAndRegisterModules();
-
-        SimpleModule module = new SimpleModule();
-        mapper.registerModule(module);
-
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         return mapper;
     }
@@ -81,5 +71,4 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     public DomainClassConverter<FormattingConversionService> domainClassConverter() {
         return new DomainClassConverter<>(mvcConversionService);
     }
-
 }
