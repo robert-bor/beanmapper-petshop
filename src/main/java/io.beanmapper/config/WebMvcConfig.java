@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.beanmapper.ApplicationConfig;
 import io.beanmapper.BeanMapper;
 import io.beanmapper.spring.web.MergedFormMethodArgumentResolver;
+import io.beanmapper.spring.web.converter.StructuredJsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -38,22 +39,22 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     @Autowired private FormattingConversionService mvcConversionService;
     @Autowired private BeanMapper beanMapper;
     @Autowired private ApplicationContext applicationContext;
+    private MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter;
+
+    public WebMvcConfig() {
+        mappingJackson2HttpMessageConverter =  new MappingJackson2HttpMessageConverter();
+        mappingJackson2HttpMessageConverter.setObjectMapper(objectMapper());
+    }
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(mappingJackson2HttpMessageConverter());
-    }
-
-    public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
-        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        converter.setObjectMapper(objectMapper());
-        return converter;
+        converters.add(mappingJackson2HttpMessageConverter);
     }
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(new MergedFormMethodArgumentResolver(
-                Collections.singletonList(mappingJackson2HttpMessageConverter()),
+                Collections.singletonList(new StructuredJsonMessageConverter(mappingJackson2HttpMessageConverter)),
                 beanMapper,
                 applicationContext
         ));

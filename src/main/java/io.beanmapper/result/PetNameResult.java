@@ -1,6 +1,9 @@
 package io.beanmapper.result;
 
+import io.beanmapper.annotations.BeanProperty;
+
 public class PetNameResult {
 
-    public String nickname;
+    @BeanProperty(name = "nickname")
+    public String name;
 }

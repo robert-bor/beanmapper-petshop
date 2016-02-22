@@ -1,8 +1,8 @@
 package io.beanmapper;
 
 import io.beanmapper.config.BeanMapperBuilder;
+import io.beanmapper.config.CustomIdToEntityBeanConverter;
 import io.beanmapper.config.WebMvcConfig;
-import io.beanmapper.spring.converter.IdToEntityBeanConverter;
 import io.beanmapper.spring.unproxy.HibernateAwareBeanUnproxy;
 import org.hibernate.cfg.ImprovedNamingStrategy;
 import org.hibernate.dialect.Dialect;
@@ -49,7 +49,7 @@ public class ApplicationConfig {
                 .addPackagePrefix(ApplicationConfig.class)
                 .setBeanUnproxy(new HibernateAwareBeanUnproxy())
                 .addProxySkipClass(Enum.class)
-                .addConverter(new IdToEntityBeanConverter(applicationContext))
+                .addConverter(new CustomIdToEntityBeanConverter(applicationContext))
                 .build();
     }
 

@@ -7,7 +7,18 @@ import javax.persistence.ManyToOne;
 public class Pet extends BaseModel {
 
     public enum Sex {
-        MALE, FEMALE, NEUTRAL, HERMAPHRODITIC
+        MALE("Mannelijk"), FEMALE("Vrouwelijk"), NEUTRAL("Onzijdig"), HERMAPHRODITIC("Tweeslachtig");
+
+        private final String text;
+
+        Sex(String text) {
+            this.text = text;
+        }
+
+        @Override
+        public String toString() {
+            return text;
+        }
     }
 
     private String nickname;

@@ -33,13 +33,18 @@ public class PetController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public Pet create(@MergedForm(value = PetForm.class) Pet pet) {
-        return petService.save(pet);
+    public PetResult create(@MergedForm(value = PetForm.class) Pet pet) {
+        return beanMapper.map(petService.save(pet), PetResult.class);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public Pet update(@MergedForm(value = PetForm.class, mergeId = "id") Pet pet) {
-        return petService.save(pet);
+    public PetResult update(@MergedForm(value = PetForm.class, mergeId = "id") Pet pet) {
+        return beanMapper.map(petService.save(pet), PetResult.class);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
+    public PetResult partialUpdate(@MergedForm(value = PetForm.class, patch = true, mergeId = "id") Pet pet) {
+        return beanMapper.map(petService.save(pet), PetResult.class);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
